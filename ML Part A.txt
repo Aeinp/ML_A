@@ -1,0 +1,354 @@
+#4.Decsion Tree
+import pandas as pd
+import warnings
+from sklearn import tree
+warnings.filterwarnings("ignore")
+import matplotlib.pyplot as plt
+df=pd.read_csv(r'C:\Users\Asus\OneDrive\Desktop\ML_LAB/zoo.csv')
+print (df)
+
+
+
+
+
+
+x= df.iloc[:, 1:17]
+x.shape
+print(df.iloc[:, 1:17])
+
+
+
+
+y=df.iloc[:,17]
+y.shape
+
+
+
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,train_size=.8,test_size=.2)
+from sklearn.tree import DecisionTreeClassifier
+clf=DecisionTreeClassifier().fit(x_train,y_train)
+pred=clf.predict(x_test)
+accuracy=clf.score(x_test,y_test)
+print('Accuracy ', accuracy)
+
+
+
+
+
+from sklearn import metrics 
+print(metrics.confusion_matrix(y_test,pred))
+
+
+
+
+
+print(metrics.classification_report(y_test,pred))
+
+
+
+
+plt.figure(figsize=(15,15))
+tree.plot_tree(clf)
+plt.show()
+
+
+
+
+df.head()
+
+
+
+
+
+
+#5.Linear reg
+import pandas as pd
+import numpy as np
+df=pd.read_csv('Food_Truck.csv')
+df.head()
+
+
+
+x=df['x']
+y=df['y']
+
+
+
+n=x.count()
+y_sum = 0
+x_sum = 0 
+x2 = 0
+y2 = 0
+xy = 0
+for i in range(n):
+    x_sum += x[i]
+    y_sum += y[i]
+    x2 += (x[i]**2)
+    y2 += (y[i]**2)
+    xy += x[i]*y[i]
+    
+x_mean  = x_sum/n;
+y_mean = y_sum/n;
+dev_x = 0
+dev_y = 0
+for i in range(n):
+    dev_x += ((x[i]-x_mean)**2)
+    dev_y += ((y[i]-y_mean)**2)
+x_std = (dev_x/n)**(1/2)
+y_std = (dev_y/n)**(1/2)
+print(x_std,y_std,x_mean,y_mean)
+
+
+
+
+r = (xy-(x_sum*y_sum)/n)/(((x2-(((x_sum)**2)/n))**(1/2))*((y2-(((y_sum)**2)/n))**(1/2)))
+m = r*(y_std/x_std)
+c = y_mean - m*x_mean
+print(m,r,c)
+
+
+
+y_pred = []
+for num in x:
+    y_pred.append((m*num) + c)
+df['y1']=y_pred
+df.head()
+
+
+
+
+import matplotlib.pyplot as plt
+plt.scatter(x,y)
+plt.plot(x,y_pred,color='black')
+plt.show()
+
+
+
+
+SSE = 0
+SST = 0
+SSR = 0
+for i in range(n):
+    SST += ((y[i] - y_mean)**2)
+    SSE += ((y[i]-y_pred[i])**2)
+    SSR += ((y_pred[i]-y_mean)**2)
+MSE = SSE/n
+cost = pow(MSE,1/2)
+R2 = 1- (SSE/SST)
+print("SST: {}\nSSE: {}\nSSR: {}\nMSE: {}\nCost: {}\nR2: {}".format(SST,SSE,SSR,MSE,cost,R2))
+
+
+
+
+
+
+
+
+#3.Kmeans
+
+X = [[5.9,3.2],[4.6,2.9],[6.2,2.8],[4.7,3.2],[5.5,4.2],[5.0,3.0],[4.9,3.1],[6.7,3.1],[5.1,3.8],[6.0,3.0]]
+X
+
+
+
+
+
+
+centroids = [[6.2, 3.2], [6.6, 3.7], [6.5, 3.0]]
+clusters = {}
+
+
+
+
+
+
+def eucli_dist(x1,x2,y1,y2):
+    dist = (((x2-x1)**2) + ((y2-y1)**2))**(1/2)
+    return dist
+
+
+
+
+
+def k_means(X, centroids,k=3):
+    
+    for i in range(k):
+        clusters[i] = []
+
+    for i in range(len(X)):
+        euc_dist = []
+
+        for j in range(k):
+            euc_dist.append(eucli_dist( X[i][0], centroids[j][0], X[i][1], centroids[j][1] ))
+
+        cent_ind = euc_dist.index(min(euc_dist))
+        clusters[cent_ind].append(X[i])
+
+    return clusters
+
+
+
+
+
+def new_cent(X, centroids, k=3):
+    for i in range(k):
+            x_sum = 0
+            y_sum = 0
+            for j in range(len(clusters[i])):
+                x_sum += clusters[i][j][0]
+                y_sum += clusters[i][j][1]
+            centroids[i] = [round( (x_sum / len(clusters[i])),3) , round( (y_sum / len(clusters[i])) , 3)]
+
+    return centroids
+
+
+
+
+
+
+for i in range(5):
+    clusters = k_means(X,centroids,3)
+    centroids = new_cent(X,centroids,3)
+    
+    print("\nCentroids during iteration {}: {}".format(i+1,centroids))
+
+    if i == 0:
+        print("Centre of the 1st cluster after 1 iteration: ", centroids[0])
+    elif i == 1:
+        print("Centre of the 2nd cluster after 2 iterations: ", centroids[1])
+        
+        
+        
+        
+        
+        
+        
+print("Centre of the third cluster after it converges: ", centroids[2])
+
+
+
+
+
+print("The number of iterations required for clusters to converge is 3")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#1.Central Tendeancy
+
+inp = [115.3,195.5,120.5,110.2,90.4,105.6,110.9,116.3,122.3,125.4]
+
+
+
+
+#mean
+sumn = 0
+n = len(inp) 
+for num in inp:
+    sumn+=num
+mean = sumn/n
+print(mean)
+
+
+
+
+#median
+inp.sort()
+if n%2==0:
+    med1 = inp[n//2]
+    med2 = inp[(n//2)-1]
+    median = (med1+med2)/2
+else:
+    median = inp[n//2]
+print(median)
+
+
+
+
+
+
+#mode
+l1 = []
+i = 0
+while i<n:
+    l1.append(inp.count(inp[i]))
+    i+=1
+d1 = dict(zip(inp,l1))
+d2 = {k for (k,v) in d1.items() if v==max(l1)}
+print(d2)
+
+
+
+
+
+
+
+#variance
+sumv = 0
+for number in inp:
+    sumv+=(number-mean)**2
+variance = sumv/(n-1)
+print(variance)
+
+
+
+
+
+#standard deviation
+stdev = variance**(1/2)
+print(stdev)
+
+
+
+
+
+#min-max normalization
+maxm = max(inp)
+minm = min(inp)
+#new max = 1
+#new min = 0
+normalised = []
+for num in inp:
+    x = (num - minm)/(maxm-minm)
+    normalised.append(float("{:.4f}".format(x)))
+print(normalised)
+d3 = dict(zip(inp,normalised))
+print(d3)
+
+
+
+
+
+
+
+#standardization
+standardized = []
+for num in inp:
+    y = (num-mean)/stdev
+    standardized.append(float("{:.4f}".format(y)))
+print(standardized)
+d4 = dict(zip(inp,standardized))
+print(d4)
+
+
+
+
+
+
+
+
